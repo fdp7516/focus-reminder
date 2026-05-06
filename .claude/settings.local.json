@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/tianzhan/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/**)",
+      "Bash(ls /Users/tianzhan/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/scripts/)",
+      "Read(//Users/tianzhan/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/scripts/**)",
+      "Bash(find /Users/tianzhan/.claude -name \"start-server.sh\" -type f 2>/dev/null)",
+      "Read(//Users/tianzhan/.claude/**)",
+      "Bash(/Users/tianzhan/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/scripts/start-server.sh --project-dir /Users/tianzhan/Documents/workspace/focus_reminder)",
+      "Bash(mkdir -p /Users/tianzhan/Documents/workspace/focus_reminder/docs/superpowers/specs)"
+    ],
+    "additionalDirectories": [
+      "/Users/tianzhan/Documents/workspace/focus_reminder/docs/superpowers"
+    ]
+  }
+}
