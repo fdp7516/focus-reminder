@@ -25,6 +25,8 @@ function createMainWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  mainWindow.on('closed', () => { mainWindow = null })
 }
 
 export function createReminderWindow(): BrowserWindow {
@@ -47,11 +49,13 @@ export function createReminderWindow(): BrowserWindow {
     }
   })
 
-  const url = process.env.ELECTRON_RENDERER_URL
-    ? `${process.env.ELECTRON_RENDERER_URL}?view=reminder`
-    : `file://${join(__dirname, '../renderer/index.html')}?view=reminder`
-
-  reminderWindow.loadURL(url)
+  if (process.env.ELECTRON_RENDERER_URL) {
+    reminderWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}?view=reminder`)
+  } else {
+    reminderWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      query: { view: 'reminder' }
+    })
+  }
   reminderWindow.on('closed', () => { reminderWindow = null })
 
   return reminderWindow
@@ -76,11 +80,13 @@ export function createSettingsWindow(): BrowserWindow {
     }
   })
 
-  const url = process.env.ELECTRON_RENDERER_URL
-    ? `${process.env.ELECTRON_RENDERER_URL}?view=settings`
-    : `file://${join(__dirname, '../renderer/index.html')}?view=settings`
-
-  settingsWindow.loadURL(url)
+  if (process.env.ELECTRON_RENDERER_URL) {
+    settingsWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}?view=settings`)
+  } else {
+    settingsWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      query: { view: 'settings' }
+    })
+  }
   settingsWindow.on('closed', () => { settingsWindow = null })
 
   return settingsWindow
@@ -88,7 +94,9 @@ export function createSettingsWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   createMainWindow()
-  startTray(mainWindow!)
+  if (mainWindow) {
+    startTray(mainWindow)
+  }
 
   ipcMain.handle('dismiss-reminder', () => {
     reminderWindow?.close()
@@ -100,5 +108,11 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  // 应用隐藏而非退出，常驻托盘
+  // App stays in tray; don't quit on window close
+})
+
+app.on('before-quit', () => {
+  reminderWindow?.destroy()
+  settingsWindow?.destroy()
+  mainWindow?.destroy()
 })
