@@ -67,6 +67,7 @@ export function createSettingsWindow(): BrowserWindow {
     width: 400,
     height: 350,
     show: false,
+    frame: false,
     resizable: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
