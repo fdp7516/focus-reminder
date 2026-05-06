@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { startTray } from './tray'
-import { startReminderTimer, stopReminderTimer, stopPomodoro, takeBreak } from './timer'
+import { startReminderTimer, stopReminderTimer, startPomodoro, stopPomodoro, takeBreak, getPomodoroStatus } from './timer'
 import { startActivityDetection, stopActivityDetection } from './activity'
 import { loadSettings, saveSettings, loadTodaySessions } from './store'
 import type { AppSettings } from './store'
@@ -125,6 +125,20 @@ app.whenReady().then(() => {
 
   ipcMain.handle('update-settings', (_e, settings: AppSettings) => {
     saveSettings(settings)
+  })
+
+  ipcMain.handle('start-pomodoro', () => {
+    if (reminderWindow) {
+      startPomodoro(reminderWindow)
+    }
+  })
+
+  ipcMain.handle('stop-pomodoro', () => {
+    stopPomodoro()
+  })
+
+  ipcMain.handle('get-pomodoro-status', () => {
+    return getPomodoroStatus()
   })
 })
 

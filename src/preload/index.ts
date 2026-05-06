@@ -14,5 +14,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     const handler = (_e: Electron.IpcRendererEvent, phase: string) => callback(phase)
     ipcRenderer.on('pomodoro-phase-change', handler)
     return () => ipcRenderer.removeListener('pomodoro-phase-change', handler)
-  }
+  },
+
+  startPomodoro: () => ipcRenderer.invoke('start-pomodoro'),
+  stopPomodoro: () => ipcRenderer.invoke('stop-pomodoro'),
+  getPomodoroStatus: () => ipcRenderer.invoke('get-pomodoro-status')
 })
