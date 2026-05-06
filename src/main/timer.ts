@@ -1,7 +1,8 @@
 import { BrowserWindow } from 'electron'
 import { isUserActive } from './activity'
-import { loadSettings } from './store'
+import { addSession, FocusSession, loadSettings } from './store'
 
+let sessionStartTime: number | null = null
 let reminderInterval: ReturnType<typeof setInterval> | null = null
 let isBreakMode = false
 let breakEndTime = 0
@@ -13,6 +14,8 @@ let pomodoroRemaining = 0
 let pomodoroTimer: ReturnType<typeof setInterval> | null = null
 
 export function startReminderTimer(reminderWindow: BrowserWindow): void {
+  sessionStartTime = Date.now()
+
   const settings = loadSettings()
   const intervalMs = settings.reminderInterval * 60 * 1000
 
@@ -33,6 +36,24 @@ export function startReminderTimer(reminderWindow: BrowserWindow): void {
     if (isUserActive()) {
       return
     }
+
+    // Record session before showing reminder
+    if (sessionStartTime) {
+      const endTime = Date.now()
+      const duration = Math.round((endTime - sessionStartTime) / 60000)
+      if (duration >= 1) {
+        const session: FocusSession = {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          startTime: new Date(sessionStartTime).toISOString(),
+          endTime: new Date(endTime).toISOString(),
+          duration,
+          type: 'normal'
+        }
+        addSession(session)
+      }
+    }
+    // Reset timer
+    sessionStartTime = Date.now()
 
     reminderWindow.show()
     reminderWindow.focus()
