@@ -3,6 +3,8 @@ import { join } from 'path'
 import { startTray } from './tray'
 import { startReminderTimer, stopReminderTimer, stopPomodoro, takeBreak } from './timer'
 import { startActivityDetection, stopActivityDetection } from './activity'
+import { loadSettings, saveSettings, loadTodaySessions } from './store'
+import type { AppSettings } from './store'
 
 let mainWindow: BrowserWindow | null = null
 let reminderWindow: BrowserWindow | null = null
@@ -111,6 +113,18 @@ app.whenReady().then(() => {
   ipcMain.handle('take-break', (_e, minutes: number) => {
     reminderWindow?.close()
     takeBreak(minutes)
+  })
+
+  ipcMain.handle('get-stats', () => {
+    return loadTodaySessions()
+  })
+
+  ipcMain.handle('get-settings', () => {
+    return loadSettings()
+  })
+
+  ipcMain.handle('update-settings', (_e, settings: AppSettings) => {
+    saveSettings(settings)
   })
 })
 
