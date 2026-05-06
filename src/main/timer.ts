@@ -17,6 +17,11 @@ export function startReminderTimer(reminderWindow: BrowserWindow): void {
   const intervalMs = settings.reminderInterval * 60 * 1000
 
   reminderInterval = setInterval(() => {
+    if (reminderWindow.isDestroyed()) {
+      stopReminderTimer()
+      return
+    }
+
     if (isBreakMode) {
       if (Date.now() >= breakEndTime) {
         isBreakMode = false
@@ -60,6 +65,10 @@ export function startPomodoro(reminderWindow: BrowserWindow): void {
   pomodoroRemaining = settings.workDuration * 60
 
   pomodoroTimer = setInterval(() => {
+    if (reminderWindow.isDestroyed()) {
+      stopPomodoro()
+      return
+    }
     pomodoroRemaining--
     if (pomodoroRemaining <= 0) {
       if (pomodoroPhase === 'work') {

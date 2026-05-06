@@ -9,5 +9,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onReminder: (callback: () => void) => {
     ipcRenderer.on('show-reminder', callback)
     return () => ipcRenderer.removeListener('show-reminder', callback)
+  },
+  onPomodoroPhaseChange: (callback: (phase: string) => void) => {
+    const handler = (_e: Electron.IpcRendererEvent, phase: string) => callback(phase)
+    ipcRenderer.on('pomodoro-phase-change', handler)
+    return () => ipcRenderer.removeListener('pomodoro-phase-change', handler)
   }
 })

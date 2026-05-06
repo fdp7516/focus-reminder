@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { startTray } from './tray'
-import { startReminderTimer, stopReminderTimer, takeBreak } from './timer'
+import { startReminderTimer, stopReminderTimer, stopPomodoro, takeBreak } from './timer'
 import { startActivityDetection, stopActivityDetection } from './activity'
 
 let mainWindow: BrowserWindow | null = null
@@ -120,6 +120,7 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   stopReminderTimer()
+  stopPomodoro()
   stopActivityDetection()
   reminderWindow?.destroy()
   settingsWindow?.destroy()
