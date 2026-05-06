@@ -1,5 +1,6 @@
 import ReminderPopup from './components/ReminderPopup'
 import Dashboard from './components/Dashboard'
+import Settings from './components/Settings'
 
 function App() {
   const params = new URLSearchParams(window.location.search)
@@ -9,7 +10,7 @@ function App() {
     case 'reminder':
       return <ReminderPopup />
     case 'settings':
-      return <div>Settings</div>
+      return <Settings />
     default:
       return <Dashboard />
   }
