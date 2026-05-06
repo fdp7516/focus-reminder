@@ -1,6 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { startTray } from './tray'
+import { startReminderTimer, stopReminderTimer, takeBreak } from './timer'
+import { startActivityDetection, stopActivityDetection } from './activity'
 
 let mainWindow: BrowserWindow | null = null
 let reminderWindow: BrowserWindow | null = null
@@ -98,12 +100,17 @@ app.whenReady().then(() => {
     startTray(mainWindow)
   }
 
+  startActivityDetection()
+  const reminderWin = createReminderWindow()
+  startReminderTimer(reminderWin)
+
   ipcMain.handle('dismiss-reminder', () => {
     reminderWindow?.close()
   })
 
   ipcMain.handle('take-break', (_e, minutes: number) => {
     reminderWindow?.close()
+    takeBreak(minutes)
   })
 })
 
@@ -112,6 +119,8 @@ app.on('window-all-closed', () => {
 })
 
 app.on('before-quit', () => {
+  stopReminderTimer()
+  stopActivityDetection()
   reminderWindow?.destroy()
   settingsWindow?.destroy()
   mainWindow?.destroy()
