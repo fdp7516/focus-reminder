@@ -6,5 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateSettings: (settings: any) => ipcRenderer.invoke('update-settings', settings),
   dismissReminder: () => ipcRenderer.invoke('dismiss-reminder'),
   takeBreak: (minutes: number) => ipcRenderer.invoke('take-break', minutes),
-  onReminder: (callback: () => void) => ipcRenderer.on('show-reminder', callback)
+  onReminder: (callback: () => void) => {
+    ipcRenderer.on('show-reminder', callback)
+    return () => ipcRenderer.removeListener('show-reminder', callback)
+  }
 })
